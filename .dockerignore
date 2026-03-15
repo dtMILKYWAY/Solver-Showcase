@@ -1,0 +1,82 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+backend/.venv/
+
+# Build outputs (frontend needs to be built first, but we exclude src)
+frontend/dist/
+!frontend/dist/.gitkeep
+
+# Frontend source - KEEP these for Docker build
+# Docker builds frontend from source, so src/ and public/ are needed
+# frontend/src/
+# frontend/public/
+
+# Environment variables (should be mounted or set at runtime)
+.env
+.env.local
+.env.production
+backend/.env
+
+# Logs
+*.log
+logs/
+backend/logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+.nyc_output/
+frontend/coverage/
+frontend/e2e/
+
+# Documentation (not needed in production)
+*.md
+!README.md
+design-system/
+
+# Development files
+tietu/
+qrcode-test.html
+get-ip.ps1
+show-ip.bat
+_nul
+backend/_nul
+frontend/_nul
+
+# Misc
+.cache/
+temp/
+tmp/
+.git/
+.gitignore
+
+# Pixi (using uv instead)
+pixi.lock
+pixi.toml
+
+# Test files
+frontend/lint-*.json
+frontend/playwright.config.ts
+frontend/vitest.config.ts
+# frontend/tsconfig.test.json - 构建时需要
+frontend/src/test/

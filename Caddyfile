@@ -1,0 +1,75 @@
+# ButterMath Caddy Configuration - Production
+# 域名: anndysstar.cn
+
+{
+    # 全局选项
+    admin off
+    # 开启自动 HTTPS（Let's Encrypt）
+    # email 用于证书过期提醒，请替换为你的邮箱
+    email your-email@example.com
+}
+
+# HTTP → HTTPS 重定向
+http://anndysstar.cn {
+    redir https://anndysstar.cn{uri} permanent
+}
+
+# HTTPS 主配置
+https://anndysstar.cn {
+    # 健康检查
+    handle /health {
+        respond "ButterMath Gateway OK" 200
+    }
+
+    # API 反向代理到后端
+    handle /api/* {
+        reverse_proxy backend:8000 {
+            # 健康检查
+            health_uri /health
+            health_interval 30s
+            health_timeout 10s
+            # 超时配置
+            transport http {
+                dial_timeout 30s
+                response_header_timeout 60s
+            }
+        }
+    }
+
+    # 静态前端文件
+    handle /* {
+        root * /srv/frontend
+        try_files {path} /index.html
+        file_server
+        # 缓存策略
+        @static {
+            file
+            path *.js *.css *.png *.jpg *.gif *.ico *.svg *.woff *.woff2
+        }
+        header @static Cache-Control "public, max-age=2592000, immutable"
+    }
+
+    # 安全头部
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        # 防止点击劫持
+        X-Frame-Options "SAMEORIGIN"
+        # XSS 保护
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        # Referrer 策略
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # 完整访问日志（JSON 格式）
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 100mb
+            roll_keep 10
+            roll_keep_for 720h
+        }
+        format json
+        level INFO
+    }
+}

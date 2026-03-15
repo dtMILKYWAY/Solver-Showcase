@@ -1,0 +1,63 @@
+# ButterMath Docker Compose - Production Ready
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: buttermath-backend
+    restart: unless-stopped
+    environment:
+      - ENVIRONMENT=production
+      - PORT=8000
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+    env_file:
+      - backend/.env
+    volumes:
+      # Mount logs directory for debugging
+      - ./backend/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - buttermath-network
+    # Uncomment to expose backend directly (development only)
+    # ports:
+    #   - "8000:8000"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: buttermath-gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Caddyfile for configuration
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # SSL certificates (auto-managed by Caddy)
+      - caddy_data:/data
+      - caddy_config:/config
+      # Serve frontend static files (optional)
+      - ./frontend/dist:/srv/frontend:ro
+    networks:
+      - buttermath-network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  buttermath-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

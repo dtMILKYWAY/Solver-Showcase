@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "framer-motion": "^12.34.3",
+    "gsap": "^3.14.2",
+    "react-use-measure": "^2.1.7",
+    "use-gesture": "^1.0.0"
+  }
+}
