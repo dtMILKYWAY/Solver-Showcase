@@ -2,6 +2,12 @@
 
 一款现代化的 PWA 数学解题应用，采用柔和舒适的"黄油熊"主题。
 
+## 📱 应用预览
+
+| 首页 | 杂货铺 | 宠物房 |
+| ---- | ---- | ---- |
+| ![首页](screenshots/home.png) | ![杂货铺](screenshots/shop.png) | ![宠物房](screenshots/pet.png) |
+
 ## 技术栈
 
 ### 后端
